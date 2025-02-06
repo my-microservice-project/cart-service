@@ -1,0 +1,232 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Cart-Service API",
+        "description": "This API was developed for e-commerce cache based cart management.",
+        "contact": {
+            "email": "bugrabozkurtt@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8084/api/v1",
+            "description": "Local API Server"
+        }
+    ],
+    "paths": {
+        "/cart/add": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Adds a product to the cart",
+                "operationId": "fff1d7efc5d820c5a24990371528fe02",
+                "parameters": [
+                    {
+                        "name": "x-agent-id",
+                        "in": "header",
+                        "description": "Unique agent ID for tracking guest users",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "agent-12345"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "description": "ID of the product to add to the cart",
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "quantity": {
+                                        "description": "Quantity to add to the cart",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product successfully added to the cart."
+                    },
+                    "400": {
+                        "description": "Error message"
+                    }
+                }
+            }
+        },
+        "/cart/remove/{productId}": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Removes a product from the cart",
+                "operationId": "e776b2b251f79fe7b810c58f64412412",
+                "parameters": [
+                    {
+                        "name": "x-agent-id",
+                        "in": "header",
+                        "description": "Unique agent ID for tracking guest users",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "agent-12345"
+                        }
+                    },
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "ID of the product to remove from the cart",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product successfully removed from the cart."
+                    },
+                    "400": {
+                        "description": "Error message"
+                    }
+                }
+            }
+        },
+        "/cart/update/{productId}/{quantity}": {
+            "put": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Updates the quantity of a product in the cart",
+                "operationId": "e73d9ef1cc6a9a12436ff903423fd271",
+                "parameters": [
+                    {
+                        "name": "x-agent-id",
+                        "in": "header",
+                        "description": "Unique agent ID for tracking guest users",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "agent-12345"
+                        }
+                    },
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "ID of the product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "quantity",
+                        "in": "path",
+                        "description": "New quantity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product quantity successfully updated."
+                    },
+                    "400": {
+                        "description": "Error message"
+                    }
+                }
+            }
+        },
+        "/cart/flush": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Clears the cart",
+                "operationId": "8277fef0d353a185aaea22e3c82a0f5c",
+                "parameters": [
+                    {
+                        "name": "x-agent-id",
+                        "in": "header",
+                        "description": "Unique agent ID for tracking guest users",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "agent-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart successfully cleared."
+                    },
+                    "400": {
+                        "description": "Error message"
+                    }
+                }
+            }
+        },
+        "/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Retrieves the cart",
+                "operationId": "1c29dbcbea497866ca47f3e8d9e23957",
+                "parameters": [
+                    {
+                        "name": "x-agent-id",
+                        "in": "header",
+                        "description": "Unique agent ID for tracking guest users",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "agent-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart details retrieved successfully."
+                    },
+                    "400": {
+                        "description": "Error message"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Cart",
+            "description": "Cart"
+        }
+    ]
+}
