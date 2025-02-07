@@ -4,12 +4,14 @@ namespace App\Actions;
 
 use App\Data\CartItemData;
 use App\Pipelines\AddToCartPipeline;
-use App\Services\CartService;
+use App\Repositories\Contracts\CartRepositoryInterface;
 use Illuminate\Pipeline\Pipeline;
 
 class AddToCartAction
 {
-    public function __construct(protected CartService $cartService)
+    public function __construct(
+        protected CartRepositoryInterface $cartRepository
+    )
     {}
 
     public function execute(CartItemData $cartItemData): void
@@ -19,6 +21,6 @@ class AddToCartAction
             ->through(AddToCartPipeline::stages())
             ->thenReturn();
 
-        $this->cartService->addItemToCart($processedItem);
+        $this->cartRepository->addItem($processedItem);
     }
 }

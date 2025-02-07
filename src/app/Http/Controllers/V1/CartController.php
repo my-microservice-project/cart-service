@@ -9,17 +9,14 @@ use App\Actions\RemoveFromCartAction;
 use App\Actions\UpdateCartItemAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddItemToCartRequest;
-use App\Services\CartService;
 use App\Traits\ResponseTrait;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
 class CartController extends Controller
 {
     use ResponseTrait;
-
-    public function __construct(protected CartService $cartService)
-    {}
 
     /**
      * @OA\Post(
@@ -51,7 +48,7 @@ class CartController extends Controller
         try {
             $action->execute($request->payload());
             return $this->successResponse();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return $this->errorResponse($ex->getMessage());
         }
     }

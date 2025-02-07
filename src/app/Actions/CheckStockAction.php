@@ -2,16 +2,18 @@
 
 namespace App\Actions;
 
+use App\Data\CartItemData;
 use App\Repositories\Contracts\CartRepositoryInterface;
 
-class RemoveFromCartAction
+class CheckStockAction
 {
     public function __construct(
         protected CartRepositoryInterface $cartRepository
-    ) {}
+    )
+    {}
 
-    public function execute(int $productId): void
+    public function execute(CartItemData $productDTO): float
     {
-        $this->cartRepository->removeItem($productId);
+        return $this->cartRepository->isStockAvailable($productDTO);
     }
 }

@@ -2,15 +2,17 @@
 
 namespace App\Actions;
 
-use App\Services\CartService;
+use App\Repositories\Contracts\CartRepositoryInterface;
 
 class ClearCartAction
 {
-    public function __construct(protected CartService $cartService)
+    public function __construct(
+        protected CartRepositoryInterface $cartRepository
+    )
     {}
 
     public function execute(): void
     {
-        $this->cartService->clearCart();
+        $this->cartRepository->clearCart();
     }
 }
