@@ -59,11 +59,8 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Product successfully added to the cart."
-                    },
-                    "400": {
-                        "description": "Error message"
                     }
                 }
             }
@@ -77,16 +74,6 @@
                 "operationId": "e776b2b251f79fe7b810c58f64412412",
                 "parameters": [
                     {
-                        "name": "x-agent-id",
-                        "in": "header",
-                        "description": "Unique agent ID for tracking guest users",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "agent-12345"
-                        }
-                    },
-                    {
                         "name": "productId",
                         "in": "path",
                         "description": "ID of the product to remove from the cart",
@@ -97,11 +84,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "Product successfully removed from the cart."
-                    },
-                    "400": {
-                        "description": "Error message"
                     }
                 }
             }
@@ -114,16 +98,6 @@
                 "summary": "Updates the quantity of a product in the cart",
                 "operationId": "e73d9ef1cc6a9a12436ff903423fd271",
                 "parameters": [
-                    {
-                        "name": "x-agent-id",
-                        "in": "header",
-                        "description": "Unique agent ID for tracking guest users",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "agent-12345"
-                        }
-                    },
                     {
                         "name": "productId",
                         "in": "path",
@@ -146,9 +120,6 @@
                 "responses": {
                     "200": {
                         "description": "Product quantity successfully updated."
-                    },
-                    "400": {
-                        "description": "Error message"
                     }
                 }
             }
@@ -160,24 +131,9 @@
                 ],
                 "summary": "Clears the cart",
                 "operationId": "8277fef0d353a185aaea22e3c82a0f5c",
-                "parameters": [
-                    {
-                        "name": "x-agent-id",
-                        "in": "header",
-                        "description": "Unique agent ID for tracking guest users",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "agent-12345"
-                        }
-                    }
-                ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "Cart successfully cleared."
-                    },
-                    "400": {
-                        "description": "Error message"
                     }
                 }
             }
@@ -189,24 +145,9 @@
                 ],
                 "summary": "Retrieves the cart",
                 "operationId": "1c29dbcbea497866ca47f3e8d9e23957",
-                "parameters": [
-                    {
-                        "name": "x-agent-id",
-                        "in": "header",
-                        "description": "Unique agent ID for tracking guest users",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "agent-12345"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Cart details retrieved successfully."
-                    },
-                    "400": {
-                        "description": "Error message"
                     }
                 }
             }
