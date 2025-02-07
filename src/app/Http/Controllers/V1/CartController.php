@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Actions\AddToCartAction;
-use App\Actions\ClearCartAction;
-use App\Actions\GetCartAction;
-use App\Actions\RemoveFromCartAction;
-use App\Actions\UpdateCartItemAction;
+use App\Actions\{AddToCartAction, ClearCartAction, GetCartAction, RemoveFromCartAction, UpdateCartItemAction};
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddItemToCartRequest;
 use App\Traits\ResponseTrait;
