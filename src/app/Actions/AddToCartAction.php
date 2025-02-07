@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Cart;
+namespace App\Actions;
 
 use App\Data\CartItemData;
 use App\Pipelines\AddToCartPipeline;
