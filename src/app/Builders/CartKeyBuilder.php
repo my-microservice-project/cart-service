@@ -13,11 +13,6 @@ class CartKeyBuilder
     private const BEARER_PREFIX = 'Bearer ';
 
     /**
-     * Sepet anahtarını oluşturur.
-     *
-     * - Eğer Authorization header (Bearer token) varsa: "user:{customerId}"
-     * - Aksi halde: "guest:{agentId}"
-     *
      * @return string
      * @throws Exception
      */
@@ -35,8 +30,6 @@ class CartKeyBuilder
     }
 
     /**
-     * Authorization header içindeki Bearer token'dan müşteri ID'sini alır.
-     *
      * @return string|null
      * @throws UnauthorizedException
      */
@@ -52,8 +45,6 @@ class CartKeyBuilder
     }
 
     /**
-     * Request içinden Agent ID değerini alır.
-     *
      * @return string|null
      */
     private function getAgentId(): ?string

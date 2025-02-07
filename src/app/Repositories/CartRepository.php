@@ -3,12 +3,12 @@
 namespace App\Repositories;
 
 use App\Data\CartItemData;
-use App\Exceptions\CartItemNotFoundException;
-use App\Exceptions\ProductStockNotEnoughException;
+use App\Exceptions\{CartItemNotFoundException, ProductStockNotEnoughException};
 use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Services\ProductCacheService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 final class CartRepository implements CartRepositoryInterface
 {
@@ -18,53 +18,39 @@ final class CartRepository implements CartRepositoryInterface
     ) {}
 
     /**
-     * Sepete ürün ekler.
      * @throws ProductStockNotEnoughException
+     * @throws Throwable
      */
     public function addItem(CartItemData $item): void
     {
         $cart = $this->getCart();
+        $existingItem = $cart->firstWhere('product_id', $item->product_id);
+        $updatedQuantity = $existingItem ? $existingItem->quantity + $item->quantity : $item->quantity;
 
-        $unitPrice = $this->getProductPrice($item->product_id);
+        $this->ensureStockAvailability($item->product_id, $updatedQuantity);
 
-        if ($existingItem = $cart->firstWhere('product_id', $item->product_id)) {
-            $updatedQuantity = $existingItem->quantity + $item->quantity;
-            $this->validateStockAvailability($item->product_id, $updatedQuantity);
-
-            $cart = $cart->map(fn ($cartItem) =>
-            $cartItem->product_id === $item->product_id
-                ? new CartItemData($item->product_id, $updatedQuantity, $unitPrice)
-                : $cartItem
-            );
-        } else {
-            // Stok kontrolü yap
-            $this->validateStockAvailability($item->product_id, $item->quantity);
-            $cart->push(new CartItemData($item->product_id, $item->quantity, $unitPrice));
-        }
-
+        $cart = $this->updateOrAddItem($cart, $item, $updatedQuantity);
         $this->updateCartCache($cart);
     }
 
     /**
-     * Sepetteki ürün miktarını günceller.
+     * @throws ProductStockNotEnoughException|CartItemNotFoundException
+     * @throws Throwable
      */
     public function updateItem(int $productId, int $quantity): void
     {
         $cart = $this->getCart();
+        $existingItem = $cart->firstWhere('product_id', $productId);
 
-        $cartItem = $cart->firstWhere('product_id', $productId);
-        if (!$cartItem) {
+        if (!$existingItem) {
             throw new CartItemNotFoundException();
         }
 
-        $this->validateStockAvailability($productId, $quantity);
+        $this->ensureStockAvailability($productId, $quantity);
 
-        // Ürün cache'ten fiyatı çek
-        $unitPrice = $this->getProductPrice($productId);
-
-        $cart = $cart->map(fn ($item) =>
+        $cart = $cart->map(fn($item) =>
         $item->product_id === $productId
-            ? new CartItemData($productId, $quantity, $unitPrice)
+            ? new CartItemData($productId, $quantity, $this->getProductPrice($productId))
             : $item
         );
 
@@ -72,7 +58,7 @@ final class CartRepository implements CartRepositoryInterface
     }
 
     /**
-     * Sepetten ürünü kaldırır.
+     * @throws CartItemNotFoundException
      */
     public function removeItem(int $productId): void
     {
@@ -82,82 +68,78 @@ final class CartRepository implements CartRepositoryInterface
             throw new CartItemNotFoundException();
         }
 
-        $cart = $cart->reject(fn ($item) => $item->product_id === $productId);
+        $cart = $cart->reject(fn($item) => $item->product_id === $productId);
         $this->updateCartCache($cart);
     }
 
-    /**
-     * Sepetteki ürünleri döner.
-     */
     public function getCart(): Collection
     {
         return collect(Cache::get($this->cartKey, []))
-            ->map(fn ($data) => new CartItemData($data['product_id'], $data['quantity'], $data['unit_price'] ?? null));
+            ->map(fn($data) => new CartItemData($data['product_id'], $data['quantity'], $data['unit_price'] ?? null));
     }
 
-    /**
-     * Sepeti temizler.
-     */
     public function clearCart(): void
     {
         Cache::forget($this->cartKey);
     }
 
     /**
-     * Ürünün istenen miktarının stokta olup olmadığını kontrol eder.
      * @throws ProductStockNotEnoughException
+     * @throws Throwable
      */
-    public function isStockAvailable(CartItemData $cartItemDTO): bool
-    {
-        $requestedQuantity = $cartItemDTO->quantity + $this->getCartItemQuantity($cartItemDTO->product_id);
-        return $this->validateStockAvailability($cartItemDTO->product_id, $requestedQuantity);
-    }
-
-    /**
-     * Stok yeterliliğini kontrol eder.
-     */
-    private function validateStockAvailability(int $productId, int $requestedQuantity): bool
+    private function ensureStockAvailability(int $productId, int $quantity): void
     {
         $stock = $this->getProductStock($productId);
 
-        if ($requestedQuantity > $stock) {
+        if ($quantity > $stock) {
             throw new ProductStockNotEnoughException();
         }
-
-        return true;
     }
 
     /**
-     * Ürünün stok miktarını cache’den getirir.
-     * @throws \Throwable
+     * @throws Throwable
      */
     private function getProductStock(int $productId): int
     {
         return $this->productCacheService->getStock($productId);
     }
 
-    /**
-     * Ürünün fiyatını cache’den getirir.
-     */
     private function getProductPrice(int $productId): float
     {
         return $this->productCacheService->getProductUnitPrice($productId);
     }
 
+    private function updateOrAddItem(Collection $cart, CartItemData $item, int $updatedQuantity): Collection
+    {
+        $unitPrice = $this->getProductPrice($item->product_id);
+
+        return $cart->map(fn($cartItem) =>
+        $cartItem->product_id === $item->product_id
+            ? new CartItemData($item->product_id, $updatedQuantity, $unitPrice)
+            : $cartItem
+        )->when(!$cart->firstWhere('product_id', $item->product_id), function ($cart) use ($item, $unitPrice) {
+            return $cart->push(new CartItemData($item->product_id, $item->quantity, $unitPrice));
+        });
+    }
+
+    private function updateCartCache(Collection $cart): void
+    {
+        Cache::put($this->cartKey, $cart->toArray(), now()->addDays(7));
+    }
+
     /**
-     * Sepetteki belirli bir ürünün miktarını döner.
+     * @throws Throwable
      */
+    public function isStockAvailable(CartItemData $cartItemDTO): bool
+    {
+        $requestedQuantity = $cartItemDTO->quantity + $this->getCartItemQuantity($cartItemDTO->product_id);
+        return $requestedQuantity <= $this->getProductStock($cartItemDTO->product_id);
+    }
+
     public function getCartItemQuantity(int $productId): int
     {
         return $this->getCart()->firstWhere('product_id', $productId)?->quantity ?? 0;
     }
 
-    /**
-     * Sepeti cache'e kaydeder.
-     */
-    private function updateCartCache(Collection $cart): void
-    {
-        Cache::put($this->cartKey, $cart->toArray(), now()->addDays(7));
-    }
 
 }

@@ -14,7 +14,7 @@ class AddToCartAction
     )
     {}
 
-    public function execute(CartItemData $cartItemData): void
+    public function execute(CartItemData $cartItemData): bool
     {
         $processedItem = app(Pipeline::class)
             ->send($cartItemData)
@@ -22,5 +22,7 @@ class AddToCartAction
             ->thenReturn();
 
         $this->cartRepository->addItem($processedItem);
+
+        return true;
     }
 }

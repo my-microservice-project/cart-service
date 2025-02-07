@@ -2,7 +2,9 @@
 
 namespace App\Actions;
 
+use App\Exceptions\{CartItemNotFoundException,ProductStockNotEnoughException};
 use App\Repositories\Contracts\CartRepositoryInterface;
+use Throwable;
 
 class UpdateCartItemAction
 {
@@ -10,8 +12,12 @@ class UpdateCartItemAction
         protected CartRepositoryInterface $cartRepository
     ) {}
 
-    public function execute(int $productId, int $quantity): void
+    /**
+     * @throws ProductStockNotEnoughException|CartItemNotFoundException|Throwable
+     */
+    public function execute(int $productId, int $quantity): bool
     {
         $this->cartRepository->updateItem($productId, $quantity);
+        return true;
     }
 }
