@@ -12,37 +12,41 @@ use App\Http\Requests\AddItemToCartRequest;
 use App\Traits\ResponseTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 
 class CartController extends Controller
 {
     use ResponseTrait;
 
-    /**
-     * @OA\Post(
-     *     path="/cart/add",
-     *     summary="Adds a product to the cart",
-     *     tags={"Cart"},
-     *     @OA\Parameter(
-     *         name="x-agent-id",
-     *         in="header",
-     *         description="Unique agent ID for tracking guest users",
-     *         required=true,
-     *         @OA\Schema(type="string", example="agent-12345")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"product_id", "quantity"},
-     *             @OA\Property(property="product_id", type="integer", example=15, description="ID of the product to add to the cart"),
-     *             @OA\Property(property="quantity", type="integer", example=2, description="Quantity to add to the cart")
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Product successfully added to the cart."),
-     *     @OA\Response(response=400, description="Error message")
-     * )
-     */
+    #[OA\Post(
+        path: "/cart/add",
+        summary: "Adds a product to the cart",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["product_id", "quantity"],
+                properties: [
+                    new OA\Property(property: "product_id", description: "ID of the product to add to the cart", type: "integer", example: 15),
+                    new OA\Property(property: "quantity", description: "Quantity to add to the cart", type: "integer", example: 2),
+                ],
+                type: "object"
+            )
+        ),
+        tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Product successfully added to the cart."),
+            new OA\Response(response: 400, description: "Error message"),
+        ]
+    )]
     public function add(AddItemToCartRequest $request, AddToCartAction $action): JsonResponse
     {
         try {
@@ -53,112 +57,119 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/cart/remove/{productId}",
-     *     summary="Removes a product from the cart",
-     *     tags={"Cart"},
-     *     @OA\Parameter(
-     *         name="x-agent-id",
-     *         in="header",
-     *         description="Unique agent ID for tracking guest users",
-     *         required=true,
-     *         @OA\Schema(type="string", example="agent-12345")
-     *     ),
-     *     @OA\Parameter(
-     *         name="productId",
-     *         in="path",
-     *         description="ID of the product to remove from the cart",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Product successfully removed from the cart."),
-     *     @OA\Response(response=400, description="Error message")
-     * )
-     */
+    #[OA\Delete(
+        path: "/cart/remove/{productId}",
+        summary: "Removes a product from the cart",
+        tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+            new OA\Parameter(
+                name: "productId",
+                description: "ID of the product to remove from the cart",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Product successfully removed from the cart."),
+            new OA\Response(response: 400, description: "Error message"),
+        ]
+    )]
     public function remove(int $productId, RemoveFromCartAction $action): JsonResponse
     {
         $action->execute($productId);
         return $this->successResponse();
     }
 
-
-    /**
-     * @OA\Put(
-     *     path="/cart/update/{productId}/{quantity}",
-     *     summary="Updates the quantity of a product in the cart",
-     *     tags={"Cart"},
-     *     @OA\Parameter(
-     *         name="x-agent-id",
-     *         in="header",
-     *         description="Unique agent ID for tracking guest users",
-     *         required=true,
-     *         @OA\Schema(type="string", example="agent-12345")
-     *     ),
-     *     @OA\Parameter(
-     *         name="productId",
-     *         in="path",
-     *         description="ID of the product",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="quantity",
-     *         in="path",
-     *         description="New quantity",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Product quantity successfully updated."),
-     *     @OA\Response(response=400, description="Error message")
-     * )
-     */
+    #[OA\Put(
+        path: "/cart/update/{productId}/{quantity}",
+        summary: "Updates the quantity of a product in the cart",
+        tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+            new OA\Parameter(
+                name: "productId",
+                description: "ID of the product",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+            new OA\Parameter(
+                name: "quantity",
+                description: "New quantity",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Product quantity successfully updated."),
+            new OA\Response(response: 400, description: "Error message"),
+        ]
+    )]
     public function update(int $productId, int $quantity, UpdateCartItemAction $action): JsonResponse
     {
         $action->execute($productId, $quantity);
         return $this->successResponse();
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/cart/flush",
-     *     summary="Clears the cart",
-     *     tags={"Cart"},
-     *     @OA\Parameter(
-     *         name="x-agent-id",
-     *         in="header",
-     *         description="Unique agent ID for tracking guest users",
-     *         required=true,
-     *         @OA\Schema(type="string", example="agent-12345")
-     *     ),
-     *     @OA\Response(response=200, description="Cart successfully cleared."),
-     *     @OA\Response(response=400, description="Error message")
-     * )
-     */
+    #[OA\Delete(
+        path: "/cart/flush",
+        summary: "Clears the cart",
+        tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Cart successfully cleared."),
+            new OA\Response(response: 400, description: "Error message"),
+        ]
+    )]
     public function clear(ClearCartAction $action): JsonResponse
     {
         $action->execute();
         return $this->successResponse();
     }
 
-    /**
-     * @OA\Get(
-     *     path="/cart",
-     *     summary="Retrieves the cart",
-     *     tags={"Cart"},
-     *     @OA\Parameter(
-     *         name="x-agent-id",
-     *         in="header",
-     *         description="Unique agent ID for tracking guest users",
-     *         required=true,
-     *         @OA\Schema(type="string", example="agent-12345")
-     *     ),
-     *     @OA\Response(response=200, description="Cart details retrieved successfully."),
-     *     @OA\Response(response=400, description="Error message")
-     * )
-     */
+    #[OA\Get(
+        path: "/cart",
+        summary: "Retrieves the cart",
+        tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Cart details retrieved successfully."),
+            new OA\Response(response: 400, description: "Error message"),
+        ]
+    )]
     public function get(GetCartAction $action): JsonResponse
     {
-        return $this->successResponse(data:$action->execute());
+        return $this->successResponse(data: $action->execute());
     }
 }

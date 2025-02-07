@@ -1,19 +1,17 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Cart-Service API",
-        "description": "This API was developed for e-commerce cache based cart management.",
+        "title": "Cart Service",
+        "description": "Cart API Documentation",
         "contact": {
             "email": "bugrabozkurtt@gmail.com"
         },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
         "version": "1.0.0"
     },
-    "servers": [
-        {
-            "url": "http://localhost:8084/api/v1",
-            "description": "Local API Server"
-        }
-    ],
     "paths": {
         "/cart/add": {
             "post": {
@@ -215,11 +213,30 @@
         }
     },
     "components": {
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+        "schemas": {
+            "CartItemData": {
+                "title": "Cart Item Data",
+                "description": "Represents an item in the cart",
+                "properties": {
+                    "product_id": {
+                        "description": "ID of the product",
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "quantity": {
+                        "description": "Quantity of the product in the cart",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "unit_price": {
+                        "description": "Unit price of the product (optional)",
+                        "type": "number",
+                        "format": "float",
+                        "example": 49.99,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             }
         }
     },
