@@ -69,12 +69,12 @@
                                     "product_id": {
                                         "description": "ID of the product to add to the cart",
                                         "type": "integer",
-                                        "example": 15
+                                        "example": 101
                                     },
                                     "quantity": {
                                         "description": "Quantity to add to the cart",
                                         "type": "integer",
-                                        "example": 2
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -113,7 +113,8 @@
                         "description": "ID of the product to remove from the cart",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 101
                         }
                     }
                 ],
@@ -149,7 +150,8 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
+                        },
+                        "example": 101
                     },
                     {
                         "name": "quantity",
@@ -158,7 +160,8 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
+                        },
+                        "example": 1
                     }
                 ],
                 "responses": {

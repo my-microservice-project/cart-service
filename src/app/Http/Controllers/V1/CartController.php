@@ -21,8 +21,8 @@ class CartController extends Controller
             content: new OA\JsonContent(
                 required: ["product_id", "quantity"],
                 properties: [
-                    new OA\Property(property: "product_id", description: "ID of the product to add to the cart", type: "integer", example: 15),
-                    new OA\Property(property: "quantity", description: "Quantity to add to the cart", type: "integer", example: 2),
+                    new OA\Property(property: "product_id", description: "ID of the product to add to the cart", type: "integer", example: 101),
+                    new OA\Property(property: "quantity", description: "Quantity to add to the cart", type: "integer", example: 1),
                 ],
                 type: "object"
             )
@@ -65,7 +65,7 @@ class CartController extends Controller
                 description: "ID of the product to remove from the cart",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "integer")
+                schema: new OA\Schema(type: "integer",example: 101)
             ),
         ],
         responses: [
@@ -95,8 +95,8 @@ class CartController extends Controller
                 required: true,
                 schema: new OA\Schema(type: "string", example: "agent-12345")
             ),
-            new OA\Parameter(name: "productId", description: "ID of the product", in: "path", required: true, schema: new OA\Schema(type: "integer")),
-            new OA\Parameter(name: "quantity", description: "New quantity", in: "path", required: true, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "productId", description: "ID of the product", in: "path", required: true, schema: new OA\Schema(type: "integer"), example: 101),
+            new OA\Parameter(name: "quantity", description: "New quantity", in: "path", required: true, schema: new OA\Schema(type: "integer"), example: 1),
         ],
         responses: [
             new OA\Response(response: Response::HTTP_OK, description: "Product quantity successfully updated."),
