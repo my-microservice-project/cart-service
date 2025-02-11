@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
 class CartController extends Controller
 {
     #[OA\Post(
-        path: "/api/v1/cart/add",
+        path: "/api/v1/cart",
         summary: "Adds a product to the cart",
         requestBody: new OA\RequestBody(
             required: true,
@@ -41,7 +41,7 @@ class CartController extends Controller
             new OA\Response(response: Response::HTTP_CREATED, description: "Product successfully added to the cart."),
         ]
     )]
-    public function add(AddItemToCartRequest $request, AddToCartAction $action): JsonResponse
+    public function store(AddItemToCartRequest $request, AddToCartAction $action): JsonResponse
     {
         $action->execute($request->payload());
         return $this->successResponse(status: Response::HTTP_CREATED);
@@ -49,10 +49,17 @@ class CartController extends Controller
 
 
     #[OA\Delete(
-        path: "/api/v1/cart/remove/{productId}",
+        path: "/api/v1/cart/{productId}",
         summary: "Removes a product from the cart",
         tags: ["Cart"],
         parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
             new OA\Parameter(
                 name: "productId",
                 description: "ID of the product to remove from the cart",
@@ -65,7 +72,7 @@ class CartController extends Controller
             new OA\Response(response: Response::HTTP_NO_CONTENT, description: "Product successfully removed from the cart."),
         ]
     )]
-    public function remove(int $productId, RemoveFromCartAction $action): JsonResponse
+    public function destroy(int $productId, RemoveFromCartAction $action): JsonResponse
     {
         $action->execute($productId);
         return $this->successResponse(status: Response::HTTP_NO_CONTENT);
@@ -77,10 +84,17 @@ class CartController extends Controller
      * @throws CartItemNotFoundException
      */
     #[OA\Put(
-        path: "/api/v1/cart/update/{productId}/{quantity}",
+        path: "/api/v1/cart/{productId}/{quantity}",
         summary: "Updates the quantity of a product in the cart",
         tags: ["Cart"],
         parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
             new OA\Parameter(name: "productId", description: "ID of the product", in: "path", required: true, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "quantity", description: "New quantity", in: "path", required: true, schema: new OA\Schema(type: "integer")),
         ],
@@ -98,6 +112,15 @@ class CartController extends Controller
         path: "/api/v1/cart/flush",
         summary: "Clears the cart",
         tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+        ],
         responses: [
             new OA\Response(response: Response::HTTP_NO_CONTENT, description: "Cart successfully cleared."),
         ]
@@ -112,11 +135,20 @@ class CartController extends Controller
         path: "/api/v1/cart",
         summary: "Retrieves the cart",
         tags: ["Cart"],
+        parameters: [
+            new OA\Parameter(
+                name: "x-agent-id",
+                description: "Unique agent ID for tracking guest users",
+                in: "header",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "agent-12345")
+            ),
+        ],
         responses: [
             new OA\Response(response: Response::HTTP_OK, description: "Cart details retrieved successfully."),
         ]
     )]
-    public function get(GetCartAction $action): CartResource
+    public function index(GetCartAction $action): CartResource
     {
         return (new CartResource($action->execute()))->additional(['success' => true]);
     }
