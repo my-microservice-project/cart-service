@@ -13,13 +13,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/cart/add": {
+        "/api/v1/cart/add": {
             "post": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Adds a product to the cart",
-                "operationId": "fff1d7efc5d820c5a24990371528fe02",
+                "operationId": "64ded07a7d94bb1e041a193be0820098",
                 "parameters": [
                     {
                         "name": "x-agent-id",
@@ -65,13 +65,13 @@
                 }
             }
         },
-        "/cart/remove/{productId}": {
+        "/api/v1/cart/remove/{productId}": {
             "delete": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Removes a product from the cart",
-                "operationId": "e776b2b251f79fe7b810c58f64412412",
+                "operationId": "f7c297a444b600005a79a0a6ef4f33a7",
                 "parameters": [
                     {
                         "name": "productId",
@@ -90,13 +90,13 @@
                 }
             }
         },
-        "/cart/update/{productId}/{quantity}": {
+        "/api/v1/cart/update/{productId}/{quantity}": {
             "put": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Updates the quantity of a product in the cart",
-                "operationId": "e73d9ef1cc6a9a12436ff903423fd271",
+                "operationId": "fcdbbcf6a13df0a05060ac85df892075",
                 "parameters": [
                     {
                         "name": "productId",
@@ -124,13 +124,13 @@
                 }
             }
         },
-        "/cart/flush": {
+        "/api/v1/cart/flush": {
             "delete": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Clears the cart",
-                "operationId": "8277fef0d353a185aaea22e3c82a0f5c",
+                "operationId": "c1a5db0cec9ed73e5a20408620f384f9",
                 "responses": {
                     "204": {
                         "description": "Cart successfully cleared."
@@ -138,13 +138,13 @@
                 }
             }
         },
-        "/cart": {
+        "/api/v1/cart": {
             "get": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Retrieves the cart",
-                "operationId": "1c29dbcbea497866ca47f3e8d9e23957",
+                "operationId": "78e1bd74040b55fd52e5f7d64b73150f",
                 "responses": {
                     "200": {
                         "description": "Cart details retrieved successfully."

@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
 class CartController extends Controller
 {
     #[OA\Post(
-        path: "/cart/add",
+        path: "/api/v1/cart/add",
         summary: "Adds a product to the cart",
         requestBody: new OA\RequestBody(
             required: true,
@@ -49,7 +49,7 @@ class CartController extends Controller
 
 
     #[OA\Delete(
-        path: "/cart/remove/{productId}",
+        path: "/api/v1/cart/remove/{productId}",
         summary: "Removes a product from the cart",
         tags: ["Cart"],
         parameters: [
@@ -77,7 +77,7 @@ class CartController extends Controller
      * @throws CartItemNotFoundException
      */
     #[OA\Put(
-        path: "/cart/update/{productId}/{quantity}",
+        path: "/api/v1/cart/update/{productId}/{quantity}",
         summary: "Updates the quantity of a product in the cart",
         tags: ["Cart"],
         parameters: [
@@ -95,7 +95,7 @@ class CartController extends Controller
     }
 
     #[OA\Delete(
-        path: "/cart/flush",
+        path: "/api/v1/cart/flush",
         summary: "Clears the cart",
         tags: ["Cart"],
         responses: [
@@ -109,7 +109,7 @@ class CartController extends Controller
     }
 
     #[OA\Get(
-        path: "/cart",
+        path: "/api/v1/cart",
         summary: "Retrieves the cart",
         tags: ["Cart"],
         responses: [
